@@ -1,35 +1,44 @@
-# A Bevy game template
+# Cube Hunt
 
-Template for a Game using the awesome [Bevy engine][bevy] featuring out of the box builds for Windows, Linux, macOS, Web (Wasm), Android, and iOS.
+A first 3D game in Bevy, written primarily to learn the 3D part of the engine.
 
-# What does this template give you?
 
-* small example ["game"](https://niklasei.github.io/bevy_game_template/)
-* easy setup for running the web build using [trunk] (`trunk serve`) 
-* run the native version with `cargo run`
-* workflow for GitHub actions creating releases for Windows, Linux, macOS, and Web (Wasm) ready for distribution
-    * the same workflow creates development builds for the mobile platforms (two separate workflows can push to the stores after [some setup](#deploy-mobile-platforms))
-    * push a tag in the form of `v[0-9]+.[0-9]+.[0-9]+*` (e.g. `v1.1.42`) to trigger the flow
-    * WARNING: if you work in a private repository, please be aware that macOS and Windows runners cost more build minutes. **For public repositories the builds are free!**
+# Design
 
-# How to use this template?
+Gameplay should resemble a basic aim trainer. Cubes appear for the player to shoot at, and disappear when the player shoots correctly. A counter keeps track of how many cubes have been shot, and a timer keeps track of how much time has elapsed.
 
- 1. Click "Use this template" on the repository's page
- 2. Look for `ToDo` to use your own game name everywhere
- 3. [Update the icons as described below](#updating-the-icons)
- 4. Start coding :tada:
-    * Start the native app: `cargo run`
-    * Start the web build: `trunk serve`
-        * requires [trunk]: `cargo install --locked trunk`
-        * requires `wasm32-unknown-unknown` target: `rustup target add wasm32-unknown-unknown`
-        * this will serve your app on `8080` and automatically rebuild + reload it after code changes
-    * Start the android app: `cargo apk run -p mobile`
-        * requires following the instructions in the [bevy example readme for android setup][android-instructions]
-    * Start the iOS app (see the [bevy example readme for ios setup instructions][ios-instructions])
-        * Install Xcode through the app store
-        * Launch Xcode and install the iOS simulator (check the box upon first start, or install it through `Preferences > Platforms` later)
-        * Install the iOS and iOS simulator Rust targets with `rustup target add aarch64-apple-ios x86_64-apple-ios aarch64-apple-ios-sim`
-        * run `make run` inside the `/mobile` directory
+- Shooting
+    - Instantaneous raytrace
+    - cubes disappear after one hit
+
+## Stretch Goals
+
+These are things that would be nice but do not fit in the MVP
+
+- Moving cubes
+- Cube health
+- New game configuration screen
+- End-game stats screen
+- Projectile movement
+- Character movement
+- Multiplayer (shoot cubes & each other)
+
+# Development
+
+Forked from [bevy_game_template](https://github.com/NiklasEi/bevy_game_template)
+
+* Start the native app: `cargo run`
+* Start the web build: `trunk serve`
+    * requires [trunk]: `cargo install --locked trunk`
+    * requires `wasm32-unknown-unknown` target: `rustup target add wasm32-unknown-unknown`
+    * this will serve your app on `8080` and automatically rebuild + reload it after code changes
+* Start the android app: `cargo apk run -p mobile`
+    * requires following the instructions in the [bevy example readme for android setup][android-instructions]
+* Start the iOS app (see the [bevy example readme for ios setup instructions][ios-instructions])
+    * Install Xcode through the app store
+    * Launch Xcode and install the iOS simulator (check the box upon first start, or install it through `Preferences > Platforms` later)
+    * Install the iOS and iOS simulator Rust targets with `rustup target add aarch64-apple-ios x86_64-apple-ios aarch64-apple-ios-sim`
+    * run `make run` inside the `/mobile` directory
 
 You should keep the `credits` directory up to date. The release workflow automatically includes the directory in every build.
 

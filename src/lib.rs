@@ -5,6 +5,7 @@ mod audio;
 mod loading;
 mod menu;
 mod player;
+mod simple_scene;
 
 use crate::actions::ActionsPlugin;
 use crate::audio::InternalAudioPlugin;
@@ -16,6 +17,7 @@ use bevy::app::App;
 #[cfg(debug_assertions)]
 use bevy::diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin};
 use bevy::prelude::*;
+use simple_scene::SimpleScenePlugin;
 
 // This example game uses States to separate logic
 // See https://bevy-cheatbook.github.io/programming/states.html
@@ -40,7 +42,8 @@ impl Plugin for GamePlugin {
             MenuPlugin,
             ActionsPlugin,
             InternalAudioPlugin,
-            PlayerPlugin,
+            // PlayerPlugin,
+            SimpleScenePlugin,
         ));
 
         #[cfg(debug_assertions)]
