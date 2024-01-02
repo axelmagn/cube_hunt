@@ -1,14 +1,18 @@
+use std::f32::{consts::PI, EPSILON};
+
 use bevy::{
-    app::Plugin,
+    app::{Plugin, Update},
     asset::Assets,
     core_pipeline::core_3d::Camera3dBundle,
     ecs::{
-        schedule::OnEnter,
-        system::{Commands, Res, ResMut},
+        query::With,
+        schedule::{common_conditions::in_state, IntoSystemConfigs, OnEnter},
+        system::{Commands, Query, Res, ResMut, Resource},
     },
-    math::{Quat, Vec3},
+    math::{Quat, Vec2, Vec3},
     pbr::{PbrBundle, PointLight, PointLightBundle, StandardMaterial},
     render::{
+        camera::Camera,
         color::Color,
         mesh::{shape, Mesh},
     },
@@ -23,15 +27,21 @@ pub struct SimpleScenePlugin;
 
 impl Plugin for SimpleScenePlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
-        app.add_systems(OnEnter(GameState::Playing), setup);
+        app.insert_resource(CameraAngle(Vec2::new(0., PI / 8.)));
+        app.add_systems(OnEnter(GameState::Playing), setup)
+            .add_systems(Update, move_camera.run_if(in_state(GameState::Playing)));
     }
 }
+
+#[derive(Resource)]
+pub struct CameraAngle(Vec2);
 
 /// set up a simple 3D scene
 fn setup(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
+    camera_angle: Res<CameraAngle>,
 ) {
     // circular base
     commands.spawn(PbrBundle {
@@ -59,9 +69,34 @@ fn setup(
     });
     // camera
     commands.spawn(Camera3dBundle {
-        transform: Transform::from_xyz(-2.5, 4.5, 9.0).looking_at(Vec3::ZERO, Vec3::Y),
+        transform: camera_transform(&camera_angle),
         ..default()
     });
 }
 
-fn move_camera(time: Res<Time>, actions: Res<Actions>) {}
+fn move_camera(
+    time: Res<Time>,
+    actions: Res<Actions>,
+    mut camera_angle: ResMut<CameraAngle>,
+    mut camera_query: Query<&mut Transform, With<Camera>>,
+) {
+    if actions.camera_orbit.is_none() {
+        return;
+    }
+    let speed = 1.;
+    camera_angle.0.x += actions.camera_orbit.unwrap().x * speed * time.delta_seconds();
+    camera_angle.0.x = camera_angle.0.x % (2. * PI);
+    camera_angle.0.y += actions.camera_orbit.unwrap().y * speed * time.delta_seconds();
+    camera_angle.0.y = camera_angle.0.y.clamp(0. + EPSILON, PI / 2. - EPSILON);
+    for mut camera_xform in &mut camera_query {
+        *camera_xform = camera_transform(&camera_angle);
+    }
+}
+
+fn camera_transform(camera_angle: &CameraAngle) -> Transform {
+    let radius = 10.;
+    let y = radius * camera_angle.0.y.sin();
+    let z = radius * camera_angle.0.x.sin() * camera_angle.0.y.cos();
+    let x = radius * camera_angle.0.x.cos() * camera_angle.0.y.cos();
+    Transform::from_xyz(x, y, z).looking_at(Vec3::ZERO, Vec3::Y)
+}

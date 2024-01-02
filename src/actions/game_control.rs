@@ -1,25 +1,25 @@
 use bevy::prelude::{Input, KeyCode, Res};
 
 pub enum GameControl {
-    Up,
-    Down,
-    Left,
-    Right,
+    OrbitCameraUp,
+    OrbitCameraDown,
+    OrbitCameraLeft,
+    OrbitCameraRight,
 }
 
 impl GameControl {
     pub fn pressed(&self, keyboard_input: &Res<Input<KeyCode>>) -> bool {
         match self {
-            GameControl::Up => {
+            GameControl::OrbitCameraUp => {
                 keyboard_input.pressed(KeyCode::W) || keyboard_input.pressed(KeyCode::Up)
             }
-            GameControl::Down => {
+            GameControl::OrbitCameraDown => {
                 keyboard_input.pressed(KeyCode::S) || keyboard_input.pressed(KeyCode::Down)
             }
-            GameControl::Left => {
+            GameControl::OrbitCameraLeft => {
                 keyboard_input.pressed(KeyCode::A) || keyboard_input.pressed(KeyCode::Left)
             }
-            GameControl::Right => {
+            GameControl::OrbitCameraRight => {
                 keyboard_input.pressed(KeyCode::D) || keyboard_input.pressed(KeyCode::Right)
             }
         }
